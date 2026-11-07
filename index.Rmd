@@ -1,0 +1,88 @@
+---
+title: "Coastal Karnataka Explorer"
+author: ""
+date: "November 7, 2026"
+output:
+  html_document:
+    self_contained: true
+    toc: false
+    theme: readable
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+# Install once, if needed:
+# install.packages(c("leaflet", "htmlwidgets", "dplyr"))
+
+library(leaflet)
+library(dplyr)
+
+places <- data.frame(
+  name = c(
+    "Manipal",
+    "Udupi Sri Krishna Matha",
+    "Malpe Beach",
+    "Kapu Lighthouse"
+  ),
+  lat = c(13.35000, 13.34118, 13.36197, 13.2239132),
+  lng = c(74.78333, 74.75201, 74.69753, 74.7367936),
+  category = c("Education town", "Heritage", "Coast", "Coastal landmark"),
+  details = c(
+    "A university town in Udupi district, Karnataka.",
+    "A historic Krishna temple and matha in Udupi.",
+    "A coastal beach near Udupi, known for its fishing harbour and sea views.",
+    "A historic lighthouse on the Arabian Sea coast near Kaup (Kapu)."
+  ),
+  stringsAsFactors = FALSE
+)
+
+places$popup <- paste0(
+  "<strong>", places$name, "</strong><br>",
+  "<em>", places$category, "</em><br>",
+  places$details
+)
+```
+
+# Explore the Udupi coast
+
+**Created November 7, 2026 · Udupi district, Karnataka, India**
+
+This interactive map highlights four places across the Manipal–Udupi coastal area. Select a marker to read a short description, zoom in for local detail, or drag the map to explore the surrounding coastline.
+
+```{r leaflet-map}
+leaflet(data = places, options = leafletOptions( preferCanvas = TRUE )) %>%
+  addTiles(
+    urlTemplate = "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    attribution = "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+    options = tileOptions(noWrap = TRUE, maxZoom = 19)
+  ) %>%
+  addCircleMarkers(
+    lng = ~lng,
+    lat = ~lat,
+    radius = 7,
+    stroke = TRUE,
+    weight = 2,
+    color = "#ffffff",
+    fillColor = "#176b87",
+    fillOpacity = 0.95,
+    popup = ~popup,
+    label = ~name
+  ) %>%
+  fitBounds(
+    lng1 = min(places$lng) - 0.04,
+    lat1 = min(places$lat) - 0.025,
+    lng2 = max(places$lng) + 0.025,
+    lat2 = max(places$lat) + 0.025
+  )
+```
+
+## Places on the map
+
+- **Manipal** — a university town east of Udupi.
+- **Udupi Sri Krishna Matha** — a major historic temple in the city of Udupi.
+- **Malpe Beach** — a beach on the Arabian Sea coast.
+- **Kapu Lighthouse** — a coastal lighthouse near Kaup/Kapu.
+
+*Map tiles are provided by OpenStreetMap contributors. An internet connection is required to load the interactive basemap. Standard OpenStreetMap tile usage rules apply; do not bulk-download or use the tiles for offline prefetching.*
